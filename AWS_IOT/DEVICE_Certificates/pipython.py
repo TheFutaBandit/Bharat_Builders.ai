@@ -3,7 +3,6 @@ import paho.mqtt.client as mqtt
 import ssl
 import json
 import _thread
-
 def on_connect(client, userdata, flags, rc):
     print("Connected to AWS IoT: " + str(rc))
 
