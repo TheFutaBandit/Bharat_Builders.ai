@@ -8,7 +8,6 @@ import ssl
 import threading
 import asyncio
 
-# AWS IoT configuration
 ENDPOINT = "a3cz6591mmwk24-ats.iot.ap-south-1.amazonaws.com"
 PORT = 8883
 PUBLISH_TOPIC =  "raspi/data"
@@ -17,7 +16,6 @@ PATH_TO_CERT = '../DEVICE_Certificates/certificate.pem.crt'
 PATH_TO_KEY = '../DEVICE_Certificates/private.pem.key'
 PATH_TO_ROOT = '../DEVICE_Certificates/rootCA.pem'
 
-# Initialize session state
 if 'alarms' not in st.session_state:
     st.session_state.alarms = []
 if 'received_data' not in st.session_state:
@@ -25,7 +23,6 @@ if 'received_data' not in st.session_state:
 if 'mqtt_client' not in st.session_state:
     st.session_state.mqtt_client = None
 
-# Callback when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc, properties=None):
     if rc == 0:
         st.success("Connected to AWS IoT")
@@ -33,7 +30,6 @@ def on_connect(client, userdata, flags, rc, properties=None):
     else:
         st.error(f"Failed to connect, return code {rc}")
 
-# Callback when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     payload = json.loads(msg.payload.decode())
     st.session_state.received_data.append(payload)
@@ -44,11 +40,11 @@ def init_mqtt():
         client.on_connect = on_connect
         client.on_message = on_message
 
-        # Configure TLS/SSL
+        
         client.tls_set(ca_certs=PATH_TO_ROOT, certfile=PATH_TO_CERT, keyfile=PATH_TO_KEY, tls_version=ssl.PROTOCOL_TLSv1_2)
         client.tls_insecure_set(True)
 
-        # Connect to AWS IoT Core
+        
         try:
             client.connect(ENDPOINT, PORT, 60)
             client.loop_start()
@@ -70,10 +66,10 @@ def publish_to_aws_iot(data):
 def main():
     st.title("Alarm App with AWS IoT Integration")
 
-    # Initialize MQTT client
+    
     init_mqtt()
 
-    # Sidebar for navigation
+    
     page = st.sidebar.selectbox("Choose a page", ["Set Alarm", "Alarm List", "Received Data", "Settings"])
 
     if page == "Set Alarm":
